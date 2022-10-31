@@ -7,6 +7,7 @@ from curses.ascii import isdigit
 import paramiko # pip3 install paramiko
 import sys
 import getpass
+#from multiprocessing import TimeoutError
 
 def do_on_rsu(arg):
 	print(arg)
@@ -20,10 +21,29 @@ def do_on_rsu(arg):
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-user = input('Enter your username: ')
-print(user)
-pwd = getpass.getpass('Enter current password: ')
-client.connect(hostname=sys.argv[1], username=user, password=pwd)
+def login():
+	user = input('Enter Device username: ')
+	print(user)
+	pwd = getpass.getpass('Enter current password: ')
+
+	ip_add_sel = input('Do You Want to Change the IP Address: y/n ')
+	if ip_add_sel == 'y':
+		new_ip_add = input('Type NEW IP Address, (Ex 192.168.0.55) ')
+		hostname=new_ip_add
+	else: 
+		hostname=sys.argv[1]
+	client.connect(hostname, username=user, password=pwd,timeout=10.0 )
+while True:
+	try:
+		login()
+		break
+	except (paramiko.AuthenticationException):
+		print("Something went wrong - Check Crudential and Try Again")
+	except TimeoutError:
+		print("Connection Time OUT - Check Again the IP Address ")
+	#finally:
+	#	print("The 'try except' is finished") 
+
 
 do_on_rsu("muci cff set sensorAdapters.udpAdapter.enable true")
 do_on_rsu("muci cff set sensorAdapters.udpAdapter.port 12321")
