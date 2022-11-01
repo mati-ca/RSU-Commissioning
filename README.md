@@ -2,7 +2,7 @@
   Python Script for RSU Commissioning
 
 # Install Libraries
-  pip3 install paramiko
+  pip3 install isdigit
   pip3 install paramiko
   
 # Running the script options from Laptop Terminal Window - Notice the FCC Approval Status
