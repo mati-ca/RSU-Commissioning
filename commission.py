@@ -3,11 +3,11 @@
 # python3 commission.py 192.168.0.54 Psm - On - CV2X Radios ON
 # python3 commission.py 192.168.0.54 Psm - Off - CV2X Radios OFF
 
-from curses.ascii import isdigit
+#from curses.ascii import isdigit
+import isdigit # pip3 install isdigit
 import paramiko # pip3 install paramiko
 import sys
 import getpass
-#from multiprocessing import TimeoutError
 
 def do_on_rsu(arg):
 	print(arg)
