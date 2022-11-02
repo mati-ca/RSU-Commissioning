@@ -7,7 +7,10 @@
 import isdigit # pip3 install isdigit
 import paramiko # pip3 install paramiko
 import sys
+import os
 import getpass
+from cryptography.fernet import Fernet
+from CreateCred import *
 
 def do_on_rsu(arg):
 	print(arg)
@@ -17,15 +20,53 @@ def do_on_rsu(arg):
 		result += line
 		print(line[:-1])
 	return result[:-1]
+# Welcome to RSU Commissioning Script
+print (64 * "*")
+print (3 * "*")
+print ((3 * "*") + (10 * " ") + "Welcome to RSU Commissioning Script")
+print (3 * "*")
+print (64 * "*")
 
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-def login():
-	user = input('Enter Device username: ')
-	print(user)
-	pwd = getpass.getpass('Enter current password: ')
+def getCredentials():
 
+	cred_filename = 'CredFile.ini'
+	key = ''
+	dir = os.getcwd()
+	#print(dir)
+	os_type = sys.platform
+	if (os_type == 'linux'):
+		file_name = dir + '/.key.key'
+		#print(file_name)
+		with open(file_name,'r') as key_in:
+			key = key_in.read().encode()
+
+	# If you want the Cred file to be of one
+	# time use uncomment the below line
+	#os.remove(key_file)
+
+	f = Fernet(key)
+	with open(cred_filename,'r') as cred_in:
+		lines = cred_in.readlines()
+		config = {}
+		for line in lines:
+			tuples = line.rstrip('\n').split('=',1)
+			if tuples[0] in ('Username','Password'):
+				config[tuples[0]] = tuples[1]
+
+		passwd = f.decrypt(config['Password'].encode()).decode()
+		#print("Password:", passwd)
+		return passwd
+
+def login():
+	#user = input('Enter Device username: ')
+	#print(user)
+	user = 'root'
+	#pwd = getpass.getpass('Enter current password: ')
+	pwd = getCredentials()
+	print("Current Used IP Address: ",sys.argv[1] )
 	ip_add_sel = input('Do You Want to Change the IP Address: y/n ')
 	if ip_add_sel == 'y':
 		new_ip_add = input('Type NEW IP Address, (Ex 192.168.0.55) ')
@@ -33,6 +74,7 @@ def login():
 	else: 
 		hostname=sys.argv[1]
 	client.connect(hostname, username=user, password=pwd,timeout=10.0 )
+
 while True:
 	try:
 		login()
@@ -150,6 +192,8 @@ def PasswordValid():
 pwd_update = input('Do you want to update Password: y/n: ')
 if pwd_update == 'y':
 	new_pass = PasswordValid()
+	# Run mini script to create credential file
+	create_credrun(new_pass)
 	print(new_pass)
 	do_on_rsu("echo -e '" + new_pass + "\n" + new_pass + "' | passwd -q")
 

@@ -5,8 +5,6 @@ import os
 import sys
 
 cred_filename = 'CredFile.ini'
-key_file = 'key.key'
-
 key = ''
 dir = os.getcwd()
 print(dir)

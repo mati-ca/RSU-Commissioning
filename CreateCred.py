@@ -97,28 +97,32 @@ class Credentials():
 		self.__key_file
 
 
-def main():
+#def main():
 
-	# Creating an object for Credentials class
-	creds = Credentials()
+def create_credrun(new_pass):
 
-	#Accepting credentials
-	creds.username = input("Enter UserName:")
-	creds.password = input("Enter Password:")
-	print("Enter the epiry time for key file in minutes, [default:Will never expire]")
-	creds.expiry_time = int(input("Enter time:") or '-1')
+    # Creating an object for Credentials class
+    creds = Credentials()
 
-	#calling the Credit
-	creds.create_cred()
-	print("**"*20)
-	print("Cred file created successfully at {}"
-	.format(time.ctime()))
+    #Accepting credentials
+    #creds.username = input("Enter UserName:")
+    creds.username = 'root'
+    #creds.password = input("Enter Password:")
+    creds.password = new_pass
+    print("Enter the epiry time for key file in minutes, [default:Will never expire]")
+    creds.expiry_time = int(input("Enter time:") or '-1')
 
-	if not(creds.expiry_time == -1):
-		os.startfile('expire.py')
+    #calling the Credit
+    creds.create_cred()
+    print("**"*20)
+    print("Cred file created successfully at {}"
+    .format(time.ctime()))
+
+    if not(creds.expiry_time == -1):
+        os.startfile('expire.py')
 
 
-	print("**"*20)
+    print("**"*20)
 
-if __name__ == "__main__":
-	main()
+    # if __name__ == "__main__":
+# 	main()
