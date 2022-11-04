@@ -3,14 +3,11 @@
 # python3 commission.py 192.168.0.54 Psm - On - CV2X Radios ON
 # python3 commission.py 192.168.0.54 Psm - Off - CV2X Radios OFF
 
-#from curses.ascii import isdigit
 import isdigit # pip3 install isdigit
 import paramiko # pip3 install paramiko
 import sys
 import os
 import getpass
-from cryptography.fernet import Fernet
-from CreateCred import *
 
 def do_on_rsu(arg):
 	print(arg)
@@ -30,42 +27,15 @@ print (64 * "*")
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-def getCredentials():
-
-	cred_filename = 'CredFile.ini'
-	key = ''
-	dir = os.getcwd()
-	#print(dir)
-	os_type = sys.platform
-	if (os_type == 'linux'):
-		file_name = dir + '/.key.key'
-		#print(file_name)
-		with open(file_name,'r') as key_in:
-			key = key_in.read().encode()
-
-	# If you want the Cred file to be of one
-	# time use uncomment the below line
-	#os.remove(key_file)
-
-	f = Fernet(key)
-	with open(cred_filename,'r') as cred_in:
-		lines = cred_in.readlines()
-		config = {}
-		for line in lines:
-			tuples = line.rstrip('\n').split('=',1)
-			if tuples[0] in ('Username','Password'):
-				config[tuples[0]] = tuples[1]
-
-		passwd = f.decrypt(config['Password'].encode()).decode()
-		#print("Password:", passwd)
-		return passwd
-
 def login():
 	#user = input('Enter Device username: ')
 	#print(user)
 	user = 'root'
-	#pwd = getpass.getpass('Enter current password: ')
-	pwd = getCredentials()
+	pass_sel = input("Do you want to enter password manualy:: y/n " )
+	if (pass_sel == 'y'):
+		pwd = getpass.getpass('Enter current password: ')
+	else: 
+		pwd = getCredentials()
 	print("Current Used IP Address: ",sys.argv[1] )
 	ip_add_sel = input('Do You Want to Change the IP Address: y/n ')
 	if ip_add_sel == 'y':
@@ -159,7 +129,7 @@ if not found_rule:
 
 # lastly - change the password - after this client.connect will have to be called again with the new password
 def IsPasswordValid(password):
-	if (len(password) > 5 and len(password) < 15):
+	if (len(password) > 5 and len(password) < 20):
 		lowerCase = False
 		upperCase = False
 		num = False
@@ -189,12 +159,11 @@ def PasswordValid():
 			return new_pwd
 		print("Hoops Youe Retyped Wrong Password Try Again")
 
-pwd_update = input('Do you want to update Password: y/n: ')
-if pwd_update == 'y':
-	new_pass = PasswordValid()
-	# Run mini script to create credential file
-	create_credrun(new_pass)
-	print(new_pass)
-	do_on_rsu("echo -e '" + new_pass + "\n" + new_pass + "' | passwd -q")
 
-
+new_pass = PasswordValid()
+do_on_rsu("echo -e '" + new_pass + "\n" + new_pass + "' | passwd -q")
+print (64 * "*")
+print (3 * "*")
+print ((3 * "*") + (10 * " ") + "RSU Commissioning Script Completed")
+print (3 * "*")
+print (64 * "*")
