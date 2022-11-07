@@ -9,13 +9,6 @@ import sys
 import os
 import getpass
 
-proxy = 'cavnue@test-cwl-144e-apu:9090'
-
-os.environ['http_proxy'] = proxy 
-os.environ['HTTP_PROXY'] = proxy
-os.environ['https_proxy'] = proxy
-os.environ['HTTPS_PROXY'] = proxy
-
 def do_on_rsu(arg):
 	print(arg)
 	stdin, stdout, stderr = client.exec_command(arg)
