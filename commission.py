@@ -9,6 +9,13 @@ import sys
 import os
 import getpass
 
+proxy = 'cavnue@test-cwl-144e-apu:9090'
+
+os.environ['http_proxy'] = proxy 
+os.environ['HTTP_PROXY'] = proxy
+os.environ['https_proxy'] = proxy
+os.environ['HTTPS_PROXY'] = proxy
+
 def do_on_rsu(arg):
 	print(arg)
 	stdin, stdout, stderr = client.exec_command(arg)
@@ -31,11 +38,8 @@ def login():
 	#user = input('Enter Device username: ')
 	#print(user)
 	user = 'root'
-	pass_sel = input("Do you want to enter password manualy:: y/n " )
-	if (pass_sel == 'y'):
-		pwd = getpass.getpass('Enter current password: ')
-	else: 
-		pwd = getCredentials()
+	pwd = getpass.getpass('Enter Current Password: ')
+
 	print("Current Used IP Address: ",sys.argv[1] )
 	ip_add_sel = input('Do You Want to Change the IP Address: y/n ')
 	if ip_add_sel == 'y':
